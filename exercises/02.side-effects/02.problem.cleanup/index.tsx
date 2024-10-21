@@ -22,17 +22,19 @@ function App() {
 		const hugeData = new Array(1_000_000).fill(
 			new Array(1_000_000).fill('🐶🐱🐛'),
 		)
-
-		// 🐨 extract your event handler here into a function called updateQuery
-		window.addEventListener('popstate', () => {
+		function handlePoststate() {
 			// 🚨 this console.log forces the hugeData to hang around as long as the event listener is active
 			console.log(hugeData)
 
 			console.log('popstate event listener called')
 			setQuery(getQueryParam())
-		})
+		}
+
+		// 🐨 extract your event handler here into a function called updateQuery
+		window.addEventListener('popstate', handlePoststate)
 		// 🐨 return a function which removes the popstate event listener
 		// 📜 https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener
+		return () => window.removeEventListener('popstate', handlePoststate)
 	}, [])
 
 	function handleCheck(tag: string, checked: boolean) {
