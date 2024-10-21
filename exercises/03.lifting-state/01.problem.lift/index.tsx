@@ -14,20 +14,26 @@ function getQueryParam() {
 
 function App() {
 	// 🐨 add the useState for the query here (lift it up from the Form)
+	const [query, setQuery] = useState(getQueryParam)
 	return (
 		<div className="app">
 			{/* 🐨 pass the query and setQuery to the form */}
-			<Form />
+			<Form query={query} setQuery={setQuery} />
 			{/* 🐨 pass the query to this prop */}
-			<MatchingPosts query="" />
+			<MatchingPosts query={query} />
 		</div>
 	)
 }
 
 // 🐨 update the Form props to accept query and setQuery
-function Form() {
+function Form({
+	query,
+	setQuery,
+}: {
+	query: string
+	setQuery: React.Dispatch<React.SetStateAction<string>>
+}) {
 	// 🐨 lift this up to the App
-	const [query, setQuery] = useState(getQueryParam)
 
 	const words = query.split(' ').map(w => w.trim())
 
