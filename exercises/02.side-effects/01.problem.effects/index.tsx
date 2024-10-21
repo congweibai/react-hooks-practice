@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { generateGradient, getMatchingPosts } from '#shared/blog-posts'
 import { setGlobalSearchParams } from '#shared/utils'
@@ -22,6 +22,11 @@ function App() {
 	// 🦉 if that doesn't make sense to you... don't worry, it's supposed to be broken! We'll fix it next
 	// 🐨 your event handler should call setQuery to getQueryParam()
 	// 📜 https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
+	useEffect(() => {
+		window.addEventListener('popstate', () => {
+			setQuery(getQueryParam)
+		})
+	}, [])
 
 	function handleCheck(tag: string, checked: boolean) {
 		const newWords = checked ? [...words, tag] : words.filter(w => w !== tag)
