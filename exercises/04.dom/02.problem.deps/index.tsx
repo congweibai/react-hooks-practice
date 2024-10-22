@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import VanillaTilt from 'vanilla-tilt'
 
@@ -21,6 +21,7 @@ function Tilt({
 }) {
 	// 🐨 create a tiltRef here with useRef (initialize it to null)
 	// 🦺 you can pass HTMLVanillaTiltElement to the generic type
+	const tiltRef = useRef<HTMLVanillaTiltElement>(null)
 
 	const vanillaTiltOptions = {
 		max,
@@ -34,18 +35,19 @@ function Tilt({
 	// 💰 You'll get the tiltNode from tiltRef.current
 	// 💰 you'll want to keep the early return if the tiltNode is null
 	// 💰 make sure to include the vanillaTiltOptions object in the dependency array
+	useEffect(() => {
+		const tiltNode = tiltRef.current
+		if (!tiltNode) return
+		VanillaTilt.init(tiltNode, vanillaTiltOptions)
+		return () => tiltNode.vanillaTilt?.destroy()
+	}, [vanillaTiltOptions])
 
 	return (
 		<div
 			className="tilt-root"
 			// 🐨 replace the contents of this ref prop with a reference to tiltRef
 			// 💰 ref={tiltRef}
-			ref={(tiltNode: HTMLVanillaTiltElement) => {
-				// 🐨 move all of this to the useEffect callback
-				if (!tiltNode) return
-				VanillaTilt.init(tiltNode, vanillaTiltOptions)
-				return () => tiltNode.vanillaTilt?.destroy()
-			}}
+			ref={tiltRef}
 		>
 			<div className="tilt-child">{children}</div>
 		</div>
