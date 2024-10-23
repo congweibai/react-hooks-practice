@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import {
 	calculateNextValue,
@@ -10,16 +10,30 @@ import {
 const defaultState = Array(9).fill(null)
 // 🐨 create a variable for the key you'll use for storing the squares
 // 💰 'squares' should work well.
+const key = 'squares'
 function Board() {
 	// 🐨 use the callback form for useState the callback should:
 	// 1. get the value from localStorage using the key you created above
 	// 2. parse the JSON from that value
 	// 3. return the parsed value (or the default value if there isn't one)
 	// 💯 for extra credit, handle situations where the value doesn't exist or fails to parse
-	const [squares, setSquares] = useState<Squares>(Array(9).fill(null))
+	const [squares, setSquares] = useState<Squares>(() => {
+		const fromLocalStore = localStorage.getItem(key)
+		if (!fromLocalStore) return defaultState
+		try {
+			return JSON.parse(fromLocalStore)
+		} catch {
+			return defaultState
+		}
+	})
 
 	// 🐨 add a useEffect here that updates the local storage value of the squares
 	// 💰 you should stringify the squares using JSON.stringify because local storage only supports strings
+
+	useEffect(() => {
+		const updatedSquares = JSON.stringify(squares)
+		localStorage.setItem(key, updatedSquares)
+	}, [squares])
 
 	const nextValue = calculateNextValue(squares)
 	const winner = calculateWinner(squares)
