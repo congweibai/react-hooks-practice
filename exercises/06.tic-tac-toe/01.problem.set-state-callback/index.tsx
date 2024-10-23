@@ -1,18 +1,19 @@
 import { createRoot } from 'react-dom/client'
 // 💰 here are some handy utilities for you:
-// import {
-// 	calculateNextValue,
-// 	calculateStatus,
-// 	calculateWinner,
-// 	type Squares,
-// } from '#shared/tic-tac-toe-utils'
+import {
+	calculateNextValue,
+	calculateStatus,
+	calculateWinner,
+	type Squares,
+} from '#shared/tic-tac-toe-utils'
+import { useState } from 'react'
 
 const defaultState = Array(9).fill(null)
 
 function Board() {
 	// 🐨 squares is the state for this component. Add useState for squares
 	// 🦺 you can use the Squares type for the useState generic
-	const squares = defaultState
+	const [squares, setSquares] = useState<Squares>(defaultState)
 
 	// 🐨 We'll need the following bits of derived state:
 	// - nextValue ('X' or 'O')
@@ -20,6 +21,9 @@ function Board() {
 	// - status (`Winner: ${winner}`, `Scratch: Cat's game`, or `Next player: ${nextValue}`)
 	// 💰 I've written the calculations for you! So you can use my utilities
 	// from the imports above to create these variables
+	const nextValue = calculateNextValue(squares)
+	const winner = calculateWinner(squares)
+	const status = calculateStatus(winner, squares, nextValue)
 
 	// This is the function your square click handler will call. `square` should
 	// be an index. So if they click the center square, this will be `4`.
@@ -28,17 +32,20 @@ function Board() {
 		// given square index (like someone clicked a square that's already been
 		// clicked), then return early so we don't make any state changes
 		//
+		if (winner || squares[index]) return
 		// 🐨 call setSquares and pass a callback
 		// which accepts the "previousSquares", and does this:
 		//   🐨 make a copy of the squares array with the updated value
 		//   💰 previousSquares.with(index, nextValue) will do it!
 		//
 		//   🐨 return your copy of the squares
+		setSquares(previousSquares => previousSquares.with(index, nextValue))
 	}
 
 	function restart() {
 		// 🐨 reset the squares by calling setSquares with an array of empty squares
 		// 💰 you can use the defaultState variable
+		setSquares(defaultState)
 	}
 
 	function renderSquare(i: number) {
@@ -52,7 +59,7 @@ function Board() {
 	return (
 		<div>
 			{/* 🐨 put the status in the div below */}
-			<div className="status">STATUS</div>
+			<div className="status">{status}</div>
 			<div className="board-row">
 				{renderSquare(0)}
 				{renderSquare(1)}
